@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<math.h>
 
-  
 
 void print_board(int *array, int length) {
 	for (int j = 0; j < length; j++) {
@@ -51,21 +51,45 @@ int input(int *board) {
 	return board_length;
 }
 
+
 int search(int *board, int length) {
-//TODO
-	int return_value = 0;
-	return return_value;
+	int count = 0;
+	int count_blank = 0;
+	for (int i = 1; i < length; i++) {
+		for (int j = 0 ; j < length; j++) {
+			if (i == *(board + j)) {
+				count++;
+			}
+		}
+	}
+
+	for (int j = 0 ; j < length; j++) {
+		if (-1 == *(board + j)) {
+			count_blank++;
+		}
+	}
+
+	return count_blank == 1 && length == (count_blank + count);
+}
+
+
+int check_perfect_square(int length) {
+	float float_val = sqrt(length);
+	int int_val = float_val;
+	return float_val == int_val;
 }
 
 
 int check_board_validity(int *board, int length) {
-	int result = search(board,length);
-	//TODO
+	int result = 0;
+	if (check_perfect_square(length)) {
+		result = search(board, length);
+	}
 	return result;
 }
 
+
 int main(void) {
-	
 	
 	int start_board[4];
 	int length_start_board = input(start_board);
