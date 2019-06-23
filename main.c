@@ -2,19 +2,19 @@
 #include<stdlib.h>
 
 void print_array(int *array, int length) {
-	for (int j =0; j < length; j++) {
+	for (int j = 0; j < length; j++) {
 		printf("%d    ,", *array);
 		array++;
 	}
 }
 
-int main(void) {
-	int array[4];
+int input(int *board) {
+	
 	int c = EOF;
-	int length_initial_board = 0;
+	int board_length = 0;
 	
 	
-	while(c != '\n' && (c = getchar()) != '\n' && c!=EOF) {
+	while(c != '\n' && (c = getchar()) != '\n' && c != EOF) {
 		int sum;
 		switch (c) {
 		    case '0':
@@ -31,17 +31,28 @@ int main(void) {
 	                      sum = 10 * sum + (c - '0'); 
 	                      c = getchar();
 		              }
-		              array[length_initial_board++] = sum;
+		              board[board_length++] = sum;
 		              break;
-		    case 'b': array[length_initial_board++] = -1;
+		    case 'b': board[board_length++] = -1;
 		    case ' ':
 		    case '\t':
 		    case '\n':
 		              break;
 		    default:  fprintf(stderr, "Invalid character %c\n", c);
+		    		  return -1; //error
         }
 	}
+	return board_length;
+}
+
+int main(void) {
 	
-	print_array(array, length_initial_board);
+	
+	int start_board[4];
+	int length_start_board = input(start_board);
+	if (length_start_board < 0) {
+		return EXIT_FAILURE;
+	}
+	print_array(start_board, length_start_board);
 	return EXIT_SUCCESS;
 }
