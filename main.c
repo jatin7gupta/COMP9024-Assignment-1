@@ -1,10 +1,13 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void print_array(int *array, int length) {
+void print_board(int *array, int length) {
 	for (int j = 0; j < length; j++) {
-		printf("%d    ,", *array);
-		array++;
+		if (*(array + j) == -1) {
+			printf(" %c", 'b');
+		} else {
+		    printf(" %d", *(array + j));
+		}
 	}
 }
 
@@ -50,9 +53,16 @@ int main(void) {
 	
 	int start_board[4];
 	int length_start_board = input(start_board);
-	if (length_start_board < 0) {
+	
+	int goal_board[4];
+	int length_goal_board = input(goal_board);
+	
+	if (length_start_board < 0 || length_goal_board < 0) {
 		return EXIT_FAILURE;
 	}
-	print_array(start_board, length_start_board);
+	printf("\nstart:");
+	print_board(start_board, length_start_board);
+	printf("\ngoal:");
+	print_board(goal_board, length_goal_board);
 	return EXIT_SUCCESS;
 }
