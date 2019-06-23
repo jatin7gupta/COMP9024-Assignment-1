@@ -59,6 +59,7 @@ int search(int *board, int length) {
 		for (int j = 0 ; j < length; j++) {
 			if (i == *(board + j)) {
 				count++;
+				break;
 			}
 		}
 	}
