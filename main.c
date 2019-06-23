@@ -1,10 +1,19 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+void print_array(int *array, int length) {
+	for (int j =0; j < length; j++) {
+		printf("%d    ,", *array);
+		array++;
+	}
+}
+
 int main(void) {
-	int array[5];
+	int array[4];
 	int c = EOF;
-	int i = 0;
+	int length_initial_board = 0;
+	
+	
 	while(c != '\n' && (c = getchar()) != '\n' && c!=EOF) {
 		int sum;
 		switch (c) {
@@ -22,9 +31,9 @@ int main(void) {
 	                      sum = 10 * sum + (c - '0'); 
 	                      c = getchar();
 		              }
-		              array[i++] = sum;
+		              array[length_initial_board++] = sum;
 		              break;
-		    case 'b': array[i++] = -1;
+		    case 'b': array[length_initial_board++] = -1;
 		    case ' ':
 		    case '\t':
 		    case '\n':
@@ -32,8 +41,7 @@ int main(void) {
 		    default:  fprintf(stderr, "Invalid character %c\n", c);
         }
 	}
-	for (int j =0; j < 5; j++) {
-		printf("%d __", array[j]);
-	}
+	
+	print_array(array, length_initial_board);
 	return EXIT_SUCCESS;
 }
