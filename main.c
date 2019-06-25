@@ -46,6 +46,7 @@ Board input(Board input_board) {
 	                      sum = 10 * sum + (c - '0'); 
 	                      c = getchar();
 		              }
+		              //TODO 1b 2 3 b
 		              *(board + input_board->size++) = sum;
 		              board = realloc(board, (input_board->size + 1) * sizeof(int));
 		              if (board == NULL) {
@@ -101,10 +102,10 @@ int check_perfect_square(int length) {
 }
 
 
-int check_board_validity(int *board, int length) {
+int check_board_validity(Board input_board) {
 	int result = 0;
-	if (check_perfect_square(length)) {
-		result = search(board, length);
+	if (check_perfect_square(input_board->size)) {
+		result = search(input_board->board, input_board->size);
 	}
 	return result;
 }
@@ -136,57 +137,46 @@ int calculate_disorder(int *board, int length) {
 
 int main(void) {
 	Board start_board;
-	//Board goal_board;
+	Board goal_board;
 	
 	start_board = malloc(sizeof(struct board));
-	//goal_board = malloc(sizeof(struct board));
+	goal_board = malloc(sizeof(struct board));
 	
-	//start_board.board = malloc(sizeof(int));
-	//goal_board.board = malloc(sizeof(int));
-	
-	/*
-	if(start_board->board == NULL || goal_board->board == NULL) {
-		fprintf(stderr, "Run out of memory\n");
-        return EXIT_FAILURE;
-	}
-	*/
 	start_board = input(start_board);
-	check_board_validity();
-	
-	/*
 	goal_board = input(goal_board);
-	int length_start_board = start_board->size;
-	int length_goal_board = goal_board->size;
-	printf("%p\t%d", start_board->board,length_start_board);
-	printf("%p\t%d", goal_board->board, length_goal_board);
-
 	
-	int start_board_validity = check_board_validity(start_board, length_start_board);
-	int goal_board_validity = check_board_validity(goal_board, length_goal_board);
-		
-	if (length_start_board < 0 || length_goal_board < 0) {
-		return EXIT_FAILURE;
-	}
-	
-	if ( !(length_start_board == length_goal_board) || !(start_board_validity && goal_board_validity)) {
+	//TODO check for length of each boards
+	if(start_board->size != goal_board->size || !check_board_validity(start_board) || !check_board_validity(goal_board) ) {
 		fprintf(stderr, "Invalid board");
 		return EXIT_FAILURE;
-	} 
-	int start_parity = calculate_disorder(start_board, length_start_board);
-	int goal_parity =  calculate_disorder(goal_board, length_goal_board);
+	}
 	
+	int start_parity = calculate_disorder(start_board->board, start_board->size);
+	int goal_parity =  calculate_disorder(goal_board->board, goal_board->size);
 	
 	printf("start:");
-	print_board(start_board, length_start_board);
+	print_board(start_board);
 	printf("\ngoal:");
-	print_board(goal_board, length_goal_board);
+	print_board(goal_board);
 	
 	if ((start_parity % 2 == 0 && goal_parity % 2 == 0) || (start_parity % 2 == 1 && goal_parity % 2 == 1)) {
 		printf("\nsolvable\n");
 	} else {
 		printf("\nunsolvable\n");
 	}
+	
+	/*
+	int start_board_validity = check_board_validity(start_board, length_start_board);
+	int goal_board_validity = check_board_validity(goal_board, length_goal_board);
+	
+	
+	if ( !(length_start_board == length_goal_board) || !(start_board_validity && goal_board_validity)) {
+		fprintf(stderr, "Invalid board");
+		return EXIT_FAILURE;
+	} 
+	);
+	
 	*/
-	print_board(start_board);
+	
 	return EXIT_SUCCESS;
 }
