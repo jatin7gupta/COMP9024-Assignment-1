@@ -89,30 +89,63 @@ int check_board_validity(int *board, int length) {
 	return result;
 }
 
+int calculate_disorder(int *board, int length) {
+	int disorder = 0;
+	for (int i = 0; i < length; i++) {
+		for (int j = i+1 ; j < length; j++) {
+			if (*(board + i) > *(board + j) && *(board + i) != -1 && *(board + j) != -1) {
+				disorder++;
+			}
+		}
+	}
+	int board_order = (int)sqrt(length);
+	if (board_order % 2 == 0) {
+		//even
+		int index = 0;
+		for (int i = 0; i < length; i++) {
+			if (*(board + i) == -1) {
+				index = i;
+				break;
+			}
+		}
+		disorder += (int)ceil((float)(index + 1)/board_order);
+	} 
+	return disorder;
+}
+
 
 int main(void) {
 	
 	int start_board[4];
-	int length_start_board = input(start_board);
-	
-	int start_board_validity = check_board_validity(start_board, length_start_board);
-	printf("state %d", start_board_validity);
-	/*
 	int goal_board[4];
-	int length_goal_board = input(goal_board);
 	
+	int length_start_board = input(start_board);
+	int length_goal_board = input(goal_board);
+
+	int start_board_validity = check_board_validity(start_board, length_start_board);
+	int goal_board_validity = check_board_validity(goal_board, length_goal_board);
+		
 	if (length_start_board < 0 || length_goal_board < 0) {
 		return EXIT_FAILURE;
 	}
 	
-	int goal_board_validity = check_board_validity(goal_board, length_goal_board);
+	if ( !(length_start_board == length_goal_board) || !(start_board_validity && goal_board_validity)) {
+		fprintf(stderr, "Invalid board");
+		return EXIT_FAILURE;
+	} 
+	int start_parity = calculate_disorder(start_board, length_start_board);
+	int goal_parity =  calculate_disorder(goal_board, length_goal_board);
 	
 	
+	printf("start:");
+	print_board(start_board, length_start_board);
 	printf("\ngoal:");
 	print_board(goal_board, length_goal_board);
-	*/
-	printf("\nstart:");
-	print_board(start_board, length_start_board);
 	
+	if ((start_parity % 2 == 0 && goal_parity % 2 == 0) || (start_parity % 2 == 1 && goal_parity % 2 == 1)) {
+		printf("\nsolvable\n");
+	} else {
+		printf("\nunsolvable\n");
+	}
 	return EXIT_SUCCESS;
 }
