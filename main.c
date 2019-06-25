@@ -2,23 +2,32 @@
 #include<stdlib.h>
 #include<math.h>
 
+typedef struct board *Board;
+struct board {
+	int *board;
+	int size;
+};
 
-void print_board(int *array, int length) {
-	for (int j = 0; j < length; j++) {
-		if (*(array + j) == -1) {
+void print_board(Board input_board) {
+	for (int j = 0; j < input_board->size; j++) {
+		if (*(input_board->board + j) == -1) {
 			printf(" %c", 'b');
 		} else {
-		    printf(" %d", *(array + j));
+		    printf(" %d", *(input_board->board + j));
 		}
 	}
 }
 
 
-int input(int *board) {
+Board input(Board input_board) {
 	
+	int *board = input_board->board;
+	board = malloc(sizeof(int));
+	if(board == NULL) {
+		fprintf(stderr, "malloc() failed\n");
+	}
 	int c = EOF;
-	int board_length = 0;
-	
+	input_board->size = 0;
 	
 	while(c != '\n' && (c = getchar()) != '\n' && c != EOF) {
 		int sum;
@@ -37,18 +46,30 @@ int input(int *board) {
 	                      sum = 10 * sum + (c - '0'); 
 	                      c = getchar();
 		              }
-		              *(board + board_length++) = sum;
+		              *(board + input_board->size++) = sum;
+		              board = realloc(board, (input_board->size + 1) * sizeof(int));
+		              if (board == NULL) {
+		                  fprintf(stderr, "realloc() failed\n");
+		                  exit(1);
+		              }
 		              break;
-		    case 'b': *(board + board_length++) = -1;
+		    case 'b': *(board + input_board->size++) = -1;
+					  board = realloc(board, (input_board->size + 1) * sizeof(int));
+					  if (board == NULL) {
+					      fprintf(stderr, "realloc() failed\n");
+					      exit(1);
+					  }
+					  break;
 		    case ' ':
 		    case '\t':
 		    case '\n':
 		              break;
 		    default:  fprintf(stderr, "Invalid character %c\n", c);
-		    		  return -1; //error
+		    		  exit(1);
         }
 	}
-	return board_length;
+	input_board->board = board;
+	return input_board;
 }
 
 
@@ -69,7 +90,6 @@ int search(int *board, int length) {
 			count_blank++;
 		}
 	}
-
 	return count_blank == 1 && length == (count_blank + count);
 }
 
@@ -115,13 +135,32 @@ int calculate_disorder(int *board, int length) {
 
 
 int main(void) {
+	Board start_board;
+	//Board goal_board;
 	
-	int start_board[4];
-	int goal_board[4];
+	start_board = malloc(sizeof(struct board));
+	//goal_board = malloc(sizeof(struct board));
 	
-	int length_start_board = input(start_board);
-	int length_goal_board = input(goal_board);
+	//start_board.board = malloc(sizeof(int));
+	//goal_board.board = malloc(sizeof(int));
+	
+	/*
+	if(start_board->board == NULL || goal_board->board == NULL) {
+		fprintf(stderr, "Run out of memory\n");
+        return EXIT_FAILURE;
+	}
+	*/
+	start_board = input(start_board);
+	check_board_validity();
+	
+	/*
+	goal_board = input(goal_board);
+	int length_start_board = start_board->size;
+	int length_goal_board = goal_board->size;
+	printf("%p\t%d", start_board->board,length_start_board);
+	printf("%p\t%d", goal_board->board, length_goal_board);
 
+	
 	int start_board_validity = check_board_validity(start_board, length_start_board);
 	int goal_board_validity = check_board_validity(goal_board, length_goal_board);
 		
@@ -147,5 +186,7 @@ int main(void) {
 	} else {
 		printf("\nunsolvable\n");
 	}
+	*/
+	print_board(start_board);
 	return EXIT_SUCCESS;
 }
