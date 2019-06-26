@@ -44,13 +44,17 @@ Board input(Board input_board) {
 	                      sum = 10 * sum + (c - '0'); 
 	                      c = getchar();
 		              }
-		              //TODO 1b 2 3 b
-		              *(board + input_board->size++) = sum;
-		              board = realloc(board, (input_board->size + 1) * sizeof(int));
-		              if (board == NULL) {
-		                  fprintf(stderr, "realloc() failed\n");
-		                  exit(1);
-		              }
+		              if(c == '\n' || c == ' ') {
+				          *(board + input_board->size++) = sum;
+				          board = realloc(board, (input_board->size + 1) * sizeof(int));
+				          if (board == NULL) {
+				              fprintf(stderr, "realloc() failed\n");
+				              exit(1);
+				          }
+				      } else {
+				          fprintf(stderr, "invalid use of character '%c' in the board\n", c);
+				          exit(1);	
+				      }
 		              break;
 		    case 'b': *(board + input_board->size++) = -1;
 					  board = realloc(board, (input_board->size + 1) * sizeof(int));
