@@ -9,7 +9,7 @@ board: boardADT.h boardADT.c puzzle.c
 all: board
 
 clean:
-	-rm -f *.out
+	-rm -f puzzle
 
 
 
