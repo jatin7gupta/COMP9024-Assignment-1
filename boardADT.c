@@ -1,3 +1,12 @@
+/*
+Name: Jatin Gupta
+zID / email: z5240221@ad.unsw.edu.au
+Date last modified: 27/06/2019
+Name of course and session: COMP9024 19T2
+Task: ADT for puzzle.c
+Link to spec: https://webcms3.cse.unsw.edu.au/COMP9024/19T2/resources/27266 
+*/
+
 #include "boardADT.h"
 
 struct board {
