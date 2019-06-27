@@ -15,7 +15,7 @@ int main(void) {
 	Board goal_board = create_board();
 	
 	if(!check_boards_validity(start_board, goal_board)) {
-		fprintf(stderr, "Invalid board");
+		fprintf(stderr, "Invalid board\n");
 		return EXIT_FAILURE;
 	}
 	

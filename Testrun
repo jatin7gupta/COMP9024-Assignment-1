@@ -1,5 +1,5 @@
 #!/bin/sh
- PROG=./a.out
+ PROG=./puzzle
 
  case $1 in
  1) T=Tests/bad* ;;
