@@ -18,18 +18,21 @@ int main(void) {
 		fprintf(stderr, "Invalid board\n");
 		return EXIT_FAILURE;
 	}
-	
+	/*
 	printf("start:");
 	print_board(start_board);
 	
 	printf("\ngoal:");
 	print_board(goal_board);
-	
+	*/
 	if(solvable(start_board, goal_board)) {
 		printf("\nsolvable\n");
 	} else {
 		printf("\nunsolvable\n");
 	}
 	
+	free_pointer(start_board);
+	free_pointer(goal_board);
+
 	return EXIT_SUCCESS;
 }

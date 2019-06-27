@@ -38,8 +38,9 @@ Usage: Takes input and allocates new memory to each entered charater.
 */
 Board input(Board input_board) {
 	
+	input_board->board = malloc(sizeof(int));
 	int *board = input_board->board;
-	board = malloc(sizeof(int));
+	//board = malloc(sizeof(int));
 	if(board == NULL) {
 		fprintf(stderr, "malloc() failed\n");
 		exit(1);
@@ -70,10 +71,18 @@ Board input(Board input_board) {
 				          board = realloc(board, (input_board->size + 1) * sizeof(int));
 				          if (board == NULL) {
 				              fprintf(stderr, "realloc() failed\n");
+				              free(board);
+				              board = NULL;
+				              free(input_board);
+				              input_board = NULL;
 				              exit(1);
 				          }
 				      } else {
 				          fprintf(stderr, "invalid use of character '%c' in the board\n", c);
+				          free(board);
+			              board = NULL;
+			              free(input_board);
+			              input_board = NULL;
 				          exit(1);	
 				      }
 		              break;
@@ -81,6 +90,10 @@ Board input(Board input_board) {
 					  board = realloc(board, (input_board->size + 1) * sizeof(int));
 					  if (board == NULL) {
 					      fprintf(stderr, "realloc() failed\n");
+					      free(board);
+			              board = NULL;
+			              free(input_board);
+			              input_board = NULL;
 					      exit(1);
 					  }
 					  break;
@@ -89,6 +102,10 @@ Board input(Board input_board) {
 		    case '\n':
 		              break;
 		    default:  fprintf(stderr, "Invalid character %c\n", c);
+		    		  free(board);
+			          board = NULL;
+			          free(input_board);
+	                  input_board = NULL;
 		    		  exit(1);
         }
 	}
@@ -130,6 +147,8 @@ int search(int *board, int length) {
 	int *dictionary = calloc(length, sizeof(int));
 	if(dictionary == NULL) {
 		fprintf(stderr, "malloc() failed\n");
+		free(board);
+		board = NULL;
 		exit(1);
 	}
 	
@@ -140,12 +159,16 @@ int search(int *board, int length) {
 		} else if(*(board + i) == -1 && *(dictionary) != 1) {
 			*(dictionary) = 1;
 		} else {
+			free(dictionary);
+			dictionary = NULL;
 			return 0;
 		}
 	}
 	// checking if all are one in dict
 	for(int i = 0; i < length; i++) {
 		if(*(dictionary + i) != 1) {
+			free(dictionary);
+			dictionary = NULL;
 			return 0;
 		}
 	}
@@ -239,7 +262,7 @@ Return Value: 0 OR 1
 Usage: Checks if the length of the two boards are equal and then calls the check_board_validity function and computes the validity of the 2 boards.
 */
 int check_boards_validity(Board start_board, Board goal_board) {
-	return (start_board->size == goal_board->size && check_board_validity(start_board) && check_board_validity(goal_board));
+	return (start_board->size > 0 && goal_board->size > 0 && start_board->size == goal_board->size && check_board_validity(start_board) && check_board_validity(goal_board));
 }
 
 
@@ -256,4 +279,16 @@ int solvable(Board start_board, Board goal_board) {
 	return ((start_parity % 2 == 0 && goal_parity % 2 == 0) || (start_parity % 2 == 1 && goal_parity % 2 == 1));
 }
 
+/*
+Input- None
+Return Value: None
+Usage: frees all pointers and assigning it to NULL
+*/
+void free_pointer(Board input_board) {
+	free(input_board->board);
+	input_board->board = NULL;
+	
+	free(input_board);
+	input_board = NULL;
+}
 
