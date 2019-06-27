@@ -202,7 +202,6 @@ int calculate_disorder(int *board, int length) {
 	int board_order = (int)sqrt(length);
 	// if the board order is even, we calculate the row number of the blank tile
 	if (board_order % 2 == 0) {
-		//even
 		int index = 0;
 		for (int i = 0; i < length; i++) {
 			if (*(board + i) == -1) {
