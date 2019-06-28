@@ -68,7 +68,7 @@ Board input(Board input_board) {
 	                      c = getchar();
 		              }
 		              // to check if number is not appended with anything
-		              if(c == '\n' || c == ' ') {
+		              if(c == '\n' || c == ' ' || c == '\t') {
 				          *(board + input_board->size++) = sum;
 				          board = realloc(board, (input_board->size + 1) * sizeof(int));
 				          if (board == NULL) {
@@ -104,10 +104,10 @@ Board input(Board input_board) {
 		    case '\n':
 		              break;
 		    default:  fprintf(stderr, "Invalid character %c\n", c);
-		    		  free(input_board->board);
-				      input_board->board = NULL;
-		              free(input_board);
-		              input_board = NULL;
+		    		  free(board);
+				      board = NULL;
+				      free(input_board);
+				      input_board = NULL;
 		    		  exit(1);
         }
 	}
@@ -286,6 +286,17 @@ int check_boards_validity(Board start_board, Board goal_board) {
 	if(ret_val == 1 && !check_board_validity(goal_board)) {
 		fprintf(stderr, "goal board is not valid\n");
 		ret_val = 0;
+	}
+	if(ret_val == 0) {
+		free(start_board->board);
+		start_board->board = NULL;
+		free(start_board);
+		start_board = NULL;
+		
+		free(goal_board->board);
+		goal_board->board = NULL;
+		free(goal_board);
+		goal_board = NULL;
 	}
 	return ret_val;
 }
