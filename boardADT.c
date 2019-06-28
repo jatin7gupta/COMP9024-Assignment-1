@@ -117,29 +117,6 @@ Board input(Board input_board) {
 
 
 /*
-int search(int *board, int length) {
-	int count = 0;
-	int count_blank = 0;
-	for (int i = 1; i < length; i++) {
-		for (int j = 0 ; j < length; j++) {
-			if (i == *(board + j)) {
-				count++;
-				break;
-			}
-		}
-	}
-
-	for (int j = 0 ; j < length; j++) {
-		if (-1 == *(board + j)) {
-			count_blank++;
-		}
-	}
-	return count_blank == 1 && length == (count_blank + count);
-}
-*/
-
-
-/*
 Input- Board
 Return Value: 0 OR 1
 0: Invalid board 
