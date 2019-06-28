@@ -1,13 +1,15 @@
 /*
 Name: Jatin Gupta
 zID / email: z5240221@ad.unsw.edu.au
-Date last modified: 27/06/2019
+Date last modified: 28/06/2019
 Name of course and session: COMP9024 19T2
 Task: ADT for puzzle.c
 Link to spec: https://webcms3.cse.unsw.edu.au/COMP9024/19T2/resources/27266 
 */
 
+
 #include "boardADT.h"
+
 
 struct board {
 	int *board;
@@ -39,12 +41,12 @@ Usage: Takes input and allocates new memory to each entered charater.
 Board input(Board input_board) {
 	
 	input_board->board = malloc(sizeof(int));
-	int *board = input_board->board;
-	//board = malloc(sizeof(int));
-	if(board == NULL) {
+	if(input_board->board == NULL) {
 		fprintf(stderr, "malloc() failed\n");
 		exit(1);
 	}
+	
+	int *board = input_board->board;
 	int c = EOF;
 	input_board->size = 0;
 	
@@ -80,9 +82,9 @@ Board input(Board input_board) {
 				      } else {
 				          fprintf(stderr, "invalid use of character '%c' in the board\n", c);
 				          free(board);
-			              board = NULL;
-			              free(input_board);
-			              input_board = NULL;
+				          board = NULL;
+				          free(input_board);
+				          input_board = NULL;
 				          exit(1);	
 				      }
 		              break;
@@ -91,9 +93,9 @@ Board input(Board input_board) {
 					  if (board == NULL) {
 					      fprintf(stderr, "realloc() failed\n");
 					      free(board);
-			              board = NULL;
-			              free(input_board);
-			              input_board = NULL;
+				          board = NULL;
+				          free(input_board);
+				          input_board = NULL;
 					      exit(1);
 					  }
 					  break;
@@ -102,16 +104,17 @@ Board input(Board input_board) {
 		    case '\n':
 		              break;
 		    default:  fprintf(stderr, "Invalid character %c\n", c);
-		    		  free(board);
-			          board = NULL;
-			          free(input_board);
-	                  input_board = NULL;
+		    		  free(input_board->board);
+				      input_board->board = NULL;
+		              free(input_board);
+		              input_board = NULL;
 		    		  exit(1);
         }
 	}
 	input_board->board = board;
 	return input_board;
 }
+
 
 /*
 int search(int *board, int length) {
@@ -259,10 +262,32 @@ Input- 2 boards
 Return Value: 0 OR 1
 0: Valid Boards
 1: Invalid Boards
-Usage: Checks if the length of the two boards are equal and then calls the check_board_validity function and computes the validity of the 2 boards.
+Usage: Checks if the length of the two boards are equal and greater than zero and then calls the check_board_validity function and computes the validity of the 2 boards.
 */
 int check_boards_validity(Board start_board, Board goal_board) {
-	return (start_board->size > 0 && goal_board->size > 0 && start_board->size == goal_board->size && check_board_validity(start_board) && check_board_validity(goal_board));
+	//first checks if there is no previous error and then checks the following errors.
+	int ret_val = 1;
+	if(ret_val == 1 && start_board->size <= 0) {
+		fprintf(stderr, "start board is empty\n");
+		ret_val = 0;
+	}
+	if(ret_val == 1 && goal_board->size <= 0) {
+		fprintf(stderr, "goal board is empty\n");
+		ret_val = 0;
+	}
+	if(ret_val == 1 && start_board->size != goal_board->size) {
+		fprintf(stderr, "start board and goal board are not equal or invalid input\n");
+		ret_val = 0;
+	}
+	if(ret_val == 1 && !check_board_validity(start_board)) {
+		fprintf(stderr, "start board is not valid\n");
+		ret_val = 0;
+	}
+	if(ret_val == 1 && !check_board_validity(goal_board)) {
+		fprintf(stderr, "goal board is not valid\n");
+		ret_val = 0;
+	}
+	return ret_val;
 }
 
 
@@ -291,4 +316,5 @@ void free_pointer(Board input_board) {
 	free(input_board);
 	input_board = NULL;
 }
+
 

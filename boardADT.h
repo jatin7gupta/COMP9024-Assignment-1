@@ -7,9 +7,11 @@ Task: Header file for puzzle.c and boardADT.c
 Link to spec: https://webcms3.cse.unsw.edu.au/COMP9024/19T2/resources/27266 
 */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
 
 typedef struct board *Board;
 
