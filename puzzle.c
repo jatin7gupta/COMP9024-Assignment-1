@@ -19,13 +19,13 @@ int main(void) {
 	if(!check_boards_validity(start_board, goal_board)) {
 		return EXIT_FAILURE;
 	}
-	/*
+	
 	printf("start:");
 	print_board(start_board);
 	
 	printf("\ngoal:");
 	print_board(goal_board);
-	*/
+	
 	if(solvable(start_board, goal_board)) {
 		printf("\nsolvable\n");
 	} else {
