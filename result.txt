@@ -1,0 +1,614 @@
+Session: 19T2
+Assignment: ass1  Submission ID: 5240221
+
+
+Your submission has been marked. + /usr/bin/less -m /import/adams/4/z5240221/cs9024.ass1.mrk
+
+!!section banner
+#######  #####  #         ###    #####   #####     #
+#       #     # #    #   #   #  #     # #     #   ##
+#             # #    #  # #   #       #       #  # #
+ #####   #####  ####### #  #  #  #####   #####     #
+      # #            #  #   # # #       #          #
+#     # #            #   #   #  #       #          #
+ #####  #######      #    ###   ####### #######  #####
+
+5240221 Gupta, Jatin                            8543   COMPAS COMPSS
+
+Submissions:-
+
+S 0     Fri Jun 28 16:57:49 2019        5240221 all ass1 -1:-4
+
+Fri Jul 19 16:07:04 2019                ## wagner.orchestra.cse.unsw.EDU.AU ##
+!!section listing
+-rw-r--r-- z5240221/z5240221 136 2019-06-28 16:57 Makefile
+-rw-r--r-- z5240221/z5240221 494 2019-06-28 16:57 boardADT.h
+-rw-r--r-- z5240221/z5240221 7782 2019-06-28 16:57 boardADT.c
+-rw-r--r-- z5240221/z5240221  720 2019-06-28 16:57 puzzle.c
+
+===============================================================================
+-rw-r----- 1 cs9024 cs9024 136 Jul 19 16:07 Makefile
+===============================================================================
+
+     1  CC=dcc
+     2  CFLAGS=-O3
+     3
+     4  board: boardADT.h boardADT.c puzzle.c
+     5          $(CC) -o puzzle boardADT.c puzzle.c
+     6
+     7
+     8
+     9  all: board
+    10
+    11  clean:
+    12          -rm -f puzzle
+    13
+    14
+    15
+
+
+===============================================================================
+-rw-r----- 1 cs9024 cs9024 494 Jul 19 16:07 boardADT.h
+===============================================================================
+
+     1  /*
+     2  Name: Jatin Gupta
+     3  zID / email: z5240221@ad.unsw.edu.au
+     4  Date last modified: 27/06/2019
+     5  Name of course and session: COMP9024 19T2
+     6  Task: Header file for puzzle.c and boardADT.c
+     7  Link to spec: https://webcms3.cse.unsw.edu.au/COMP9024/19T2/resources/27266
+     8  */
+     9
+    10
+    11  #include <stdio.h>
+    12  #include <stdlib.h>
+    13  #include <math.h>
+    14
+    15
+    16  typedef struct board *Board;
+    17
+    18  Board create_board();
+    19
+    20  int check_boards_validity(Board, Board);
+    21
+    22  int solvable(Board, Board);
+    23
+    24  void print_board(Board);
+    25
+    26  void free_pointer(Board);
+
+
+===============================================================================
+-rw-r----- 1 cs9024 cs9024 7782 Jul 19 16:07 boardADT.c
+===============================================================================
+
+     1  /*
+     2  Name: Jatin Gupta
+     3  zID / email: z5240221@ad.unsw.edu.au
+     4  Date last modified: 28/06/2019
+     5  Name of course and session: COMP9024 19T2
+     6  Task: ADT for puzzle.c
+     7  Link to spec: https://webcms3.cse.unsw.edu.au/COMP9024/19T2/resources/27266
+     8  */
+     9
+    10
+    11  #include "boardADT.h"
+    12
+    13
+    14  struct board {
+    15          int *board;
+    16          int size;
+    17  };
+    18
+    19
+    20  /*
+    21  Input- Board
+    22  Return Value: None
+    23  Usage: Prints the board and prints b for -1.
+    24  */
+    25  void print_board(Board input_board) {
+    26          for (int j = 0; j < input_board->size; j++) {
+    27                  if (*(input_board->board + j) == -1) {
+    28                          printf(" %c", 'b');
+    29                  } else {
+    30                      printf(" %d", *(input_board->board + j));
+    31                  }
+    32          }
+    33  }
+    34
+    35
+    36  /*
+    37  Input- Board
+    38  Return Value: Board
+    39  Usage: Takes input and allocates new memory to each entered charater.
+    40  */
+    41  Board input(Board input_board) {
+    42
+    43          input_board->board = malloc(sizeof(int));
+    44          if(input_board->board == NULL) {
+    45                  fprintf(stderr, "malloc() failed\n");
+    46                  exit(1);
+    47          }
+    48
+    49          int *board = input_board->board;
+    50          int c = EOF;
+    51          input_board->size = 0;
+    52
+    53          while(c != '\n' && (c = getchar()) != '\n' && c != EOF) {
+    54                  int sum;
+    55                  switch (c) {
+    56                      case '0':
+    57                      case '1':
+    58                      case '2':
+    59                      case '3':
+    60                      case '4':
+    61                      case '5':
+    62                      case '6':
+    63                      case '7':
+    64                      case '8':
+    65                      case '9': sum = 0;
+    66                                while ((c >= '0') && (c <= '9')) {
+    67                                sum = 10 * sum + (c - '0');
+    68                                c = getchar();
+    69                                }
+    70                                // to check if number is not appended with anything
+    71                                if(c == '\n' || c == ' ' || c == '\t') {
+    72                                            *(board + input_board->size++) = sum;
+    73                                            board = realloc(board, (input_board->size + 1) * sizeof(int));
+    74                                            if (board == NULL) {
+    75                                                fprintf(stderr, "realloc() failed\n");
+    76                                                free(board);
+    77                                                board = NULL;
+    78                                                free(input_board);
+    79                                                input_board = NULL;
+    80                                                exit(1);
+    81                                            }
+    82                                        } else {
+    83                                            fprintf(stderr, "invalid use of character '%c' in the board\n", c);
+    84                                            free(board);
+    85                                            board = NULL;
+    86                                            free(input_board);
+    87                                            input_board = NULL;
+    88                                            exit(1);
+    89                                        }
+    90                                break;
+    91                      case 'b': *(board + input_board->size++) = -1;
+    92                                            board = realloc(board, (input_board->size + 1) * sizeof(int));
+    93                                            if (board == NULL) {
+    94                                                fprintf(stderr, "realloc() failed\n");
+    95                                                free(board);
+    96                                            board = NULL;
+    97                                            free(input_board);
+    98                                            input_board = NULL;
+    99                                                exit(1);
+   100                                            }
+   101                                            break;
+   102                      case ' ':
+   103                      case '\t':
+   104                      case '\n':
+   105                                break;
+   106                      default:  fprintf(stderr, "Invalid character %c\n", c);
+   107                                    free(board);
+   108                                        board = NULL;
+   109                                        free(input_board);
+   110                                        input_board = NULL;
+   111                                    exit(1);
+   112          }
+   113          }
+   114          input_board->board = board;
+   115          return input_board;
+   116  }
+   117
+   118
+   119  /*
+   120  Input- Board
+   121  Return Value: 0 OR 1
+   122  0: Invalid board
+   123  1: Valid Board
+   124  Usage: Checks if all the numbers in the board are between 1 to n-1 and has blank character. It creates a dictionary and mark the index of the dict as visited corresponding to the number which has been visited.
+   125  */
+   126  int search(int *board, int length) {
+   127          int *dictionary = calloc(length, sizeof(int));
+   128          if(dictionary == NULL) {
+   129                  fprintf(stderr, "malloc() failed\n");
+   130                  free(board);
+   131                  board = NULL;
+   132                  exit(1);
+   133          }
+   134
+   135          //filling dict with visited as 1 and for blank we assign it to zero position of dict
+   136          for(int i = 0; i < length; i++) {
+   137                  if(*(board + i) != -1 && *(board + i) < length && *(dictionary + *(board + i)) != 1) {
+   138                          *(dictionary + *(board + i)) = 1;
+   139                  } else if(*(board + i) == -1 && *(dictionary) != 1) {
+   140                          *(dictionary) = 1;
+   141                  } else {
+   142                          free(dictionary);
+   143                          dictionary = NULL;
+   144                          return 0;
+   145                  }
+   146          }
+   147          // checking if all are one in dict
+   148          for(int i = 0; i < length; i++) {
+   149                  if(*(dictionary + i) != 1) {
+   150                          free(dictionary);
+   151                          dictionary = NULL;
+   152                          return 0;
+   153                  }
+   154          }
+   155          free(dictionary);
+   156          dictionary = NULL;
+   157          return 1;
+   158  }
+   159
+   160
+   161  /*
+   162  Input- length of board
+   163  Return Value: 0 OR 1
+   164  0: Input is not perfect square
+   165  1: Input is perfect square
+   166  Usage: Checks if the input is perfect square and returns binary answer.
+   167  */
+   168  int check_perfect_square(int length) {
+   169          float float_val = sqrt(length);
+   170          int int_val = float_val;
+   171          return float_val == int_val;
+   172  }
+   173
+   174
+   175  /*
+   176  Input- board
+   177  Return Value: 0 OR 1
+   178  0: Valid Board
+   179  1: Invalid Board
+   180  Usage: Calls the check_perfect_square function and search function and retuns the value by search function.
+   181  */
+   182  int check_board_validity(Board input_board) {
+   183          int result = 0;
+   184          if (check_perfect_square(input_board->size)) {
+   185                  result = search(input_board->board, input_board->size);
+   186          }
+   187          return result;
+   188  }
+   189
+   190
+   191  /*
+   192  Input- board and length of board
+   193  Return Value: value of disorder
+   194  Usage: Calculates the disorder as described in the specs and returns the integer value. For even board, calculates the placement of blank character as well.
+   195  */
+   196  int calculate_disorder(int *board, int length) {
+   197          int disorder = 0;
+   198          for (int i = 0; i < length; i++) {
+   199                  for (int j = i+1 ; j < length; j++) {
+   200                          if (*(board + i) > *(board + j) && *(board + i) != -1 && *(board + j) != -1) {
+   201                                  disorder++;
+   202                          }
+   203                  }
+   204          }
+   205          int board_order = (int)sqrt(length);
+   206          // if the board order is even, we calculate the row number of the blank tile
+   207          if (board_order % 2 == 0) {
+   208                  int index = 0;
+   209                  for (int i = 0; i < length; i++) {
+   210                          if (*(board + i) == -1) {
+   211                                  index = i;
+   212                                  break;
+   213                          }
+   214                  }
+   215                  disorder += (int)ceil((float)(index + 1)/board_order);
+   216          }
+   217          return disorder;
+   218  }
+   219
+   220
+   221  /*
+   222  Input- None
+   223  Return Value: Board
+   224  Usage: Takes input by calling input function and returns board.
+   225  */
+   226  Board create_board() {
+   227          Board board_ADT = malloc(sizeof(struct board));
+   228          if(board_ADT == NULL) {
+   229                  fprintf(stderr, "malloc() failed\n");
+   230                  exit(1);
+   231          }
+   232          board_ADT = input(board_ADT);
+   233          return board_ADT;
+   234  }
+   235
+   236
+   237  /*
+   238  Input- 2 boards
+   239  Return Value: 0 OR 1
+   240  0: Valid Boards
+   241  1: Invalid Boards
+   242  Usage: Checks if the length of the two boards are equal and greater than zero and then calls the check_board_validity function and computes the validity of the 2 boards.
+   243  */
+   244  int check_boards_validity(Board start_board, Board goal_board) {
+   245          //first checks if there is no previous error and then checks the following errors.
+   246          int ret_val = 1;
+   247          if(ret_val == 1 && start_board->size <= 0) {
+   248                  fprintf(stderr, "start board is empty\n");
+   249                  ret_val = 0;
+   250          }
+   251          if(ret_val == 1 && goal_board->size <= 0) {
+   252                  fprintf(stderr, "goal board is empty\n");
+   253                  ret_val = 0;
+   254          }
+   255          if(ret_val == 1 && start_board->size != goal_board->size) {
+   256                  fprintf(stderr, "start board and goal board are not equal or invalid input\n");
+   257                  ret_val = 0;
+   258          }
+   259          if(ret_val == 1 && !check_board_validity(start_board)) {
+   260                  fprintf(stderr, "start board is not valid\n");
+   261                  ret_val = 0;
+   262          }
+   263          if(ret_val == 1 && !check_board_validity(goal_board)) {
+   264                  fprintf(stderr, "goal board is not valid\n");
+   265                  ret_val = 0;
+   266          }
+   267          if(ret_val == 0) {
+   268                  free(start_board->board);
+   269                  start_board->board = NULL;
+   270                  free(start_board);
+   271                  start_board = NULL;
+   272
+   273                  free(goal_board->board);
+   274                  goal_board->board = NULL;
+   275                  free(goal_board);
+   276                  goal_board = NULL;
+   277          }
+   278          return ret_val;
+   279  }
+   280
+   281
+   282  /*
+   283  Input- 2 boards
+   284  Return Value: 0 OR 1
+   285  0: Solvable
+   286  1: Unsolvable
+   287  Usage: calls the calculate_disorder functions and computes the solvibility of the 2 boards
+   288  */
+   289  int solvable(Board start_board, Board goal_board) {
+   290          int start_parity = calculate_disorder(start_board->board, start_board->size);
+   291          int goal_parity =  calculate_disorder(goal_board->board, goal_board->size);
+   292          return ((start_parity % 2 == 0 && goal_parity % 2 == 0) || (start_parity % 2 == 1 && goal_parity % 2 == 1));
+   293  }
+   294
+   295  /*
+   296  Input- None
+   297  Return Value: None
+   298  Usage: frees all pointers and assigning it to NULL
+   299  */
+   300  void free_pointer(Board input_board) {
+   301          free(input_board->board);
+   302          input_board->board = NULL;
+   303
+   304          free(input_board);
+   305          input_board = NULL;
+   306  }
+   307
+   308
+
+
+===============================================================================
+-rw-r----- 1 cs9024 cs9024 720 Jul 19 16:07 puzzle.c
+===============================================================================
+
+     1  /*
+     2  Name: Jatin Gupta
+     3  zID / email: z5240221@ad.unsw.edu.au
+     4  Date last modified: 28/06/2019
+     5  Name of course and session: COMP9024 19T2
+     6  Task: puzzle client
+     7  Link to spec: https://webcms3.cse.unsw.edu.au/COMP9024/19T2/resources/27266
+     8  */
+     9
+    10
+    11  #include "boardADT.h"
+    12
+    13
+    14  int main(void) {
+    15
+    16          Board start_board = create_board();
+    17          Board goal_board = create_board();
+    18
+    19          if(!check_boards_validity(start_board, goal_board)) {
+    20                  return EXIT_FAILURE;
+    21          }
+    22
+    23          printf("start:");
+    24          print_board(start_board);
+    25
+    26          printf("\ngoal:");
+    27          print_board(goal_board);
+    28
+    29          if(solvable(start_board, goal_board)) {
+    30                  printf("\nsolvable\n");
+    31          } else {
+    32                  printf("\nunsolvable\n");
+    33          }
+    34
+    35          free_pointer(start_board);
+    36          free_pointer(goal_board);
+    37
+    38          return EXIT_SUCCESS;
+    39  }
+
+dcc -o puzzle boardADT.c puzzle.c
+!!section tests
+** Test 1: Solvable 1
+--------------------------------
+** Test passed
+--------------------------------
+** Test 2: Solvable 2
+--------------------------------
+** Test passed
+--------------------------------
+** Test 3: Unsolvable 1
+--------------------------------
+** Test passed
+--------------------------------
+** Test 4: Unsolvable 2
+--------------------------------
+** Test passed
+--------------------------------
+** Test 5: Whitespace
+--------------------------------
+** Test passed
+--------------------------------
+** Test 6: Large Board
+--------------------------------
+** Test passed
+--------------------------------
+!!section assess
+---------------------------------
+** Testing bad input:
+2 1 3 b
+3 2 3 b
+goal board is not valid
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 1)                                  0.15/0.3    <== mark altered (original mark was 0.3)
+                                                               ^
+                      + ====================================== +
+                      + Error messages should be more specific +
+                      + ====================================== +
+---------------------------------
+** Testing bad input:
+2 1 3 b
+b 2 1 9
+goal board is not valid
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 2)                                  0.15/0.3    <== mark altered (original mark was 0.3)
+---------------------------------
+** Testing bad input:
+2 1 3 b
+b 2 1 -1
+Invalid character -
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 3)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+2 1 3 b
+3 2 1 a
+Invalid character a
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 4)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+2 1 3 b
+3 2 1 b 1
+start board and goal board are not equal or invalid input
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 5)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+2 1 3 b
+3 b
+start board and goal board are not equal or invalid input
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 6)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+1 2 3 b
+1 2 3 4 5 6 7 8 b
+start board and goal board are not equal or invalid input
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 7)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+2 1 3 a
+3 2 3 +
+Invalid character a
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 8)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+- 1 2 3
++ 2 1 3
+Invalid character -
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 9)                                  0.3/0.3
+---------------------------------
+** Testing bad input:
+b 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 1
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 b
+start board and goal board are not equal or invalid input
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 10)                                 0.3/0.3
+---------------------------------
+** Testing bad input:
+b 1 2 3 4 5 6 7
+1 2 3 4 5 6 7 b
+start board is not valid
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 11)                                 0.3/0.3
+---------------------------------
+** Testing bad input:
+b 1 2
+b 1 2 3
+start board and goal board are not equal or invalid input
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 12)                                 0.3/0.3
+---------------------------------
+** Testing bad input:
+
+
+start board is empty
+---------------------------------
+(Exit status = 1)
+!!specialmark  (Bad 13)                                 0.3/0.3
+---------------------------------
+** Found the following usage of Square Brackets:
+!!specialmark  (Design 1)                               0/0
+---------------------------------
+** Found the following usage of realloc():
+boardADT.c:73:                                    board = realloc(board, (input_board->size + 1) * sizeof(int));
+boardADT.c:75:                                        fprintf(stderr, "realloc() failed\n");
+boardADT.c:92:                                    board = realloc(board, (input_board->size + 1) * sizeof(int));
+boardADT.c:94:                                        fprintf(stderr, "realloc() failed\n");
+!!specialmark  (Design 2)                               0/0
+
+!!perftab       ** PERFORMANCE ANALYSIS **
+
+Test  1 (1)     Solvable 1   ..  !!PASSed
+Test  2 (1)     Solvable 2   ..  !!PASSed
+Test  3 (1)     Unsolvable 1 ..  !!PASSed
+Test  4 (1)     Unsolvable 2 ..  !!PASSed
+Test  5 (0.5)   Whitespace   ..  !!PASSed
+Test  6 (0.5)   Large Board  ..  !!PASSed
+
+!!perfmark      ** TOTAL PERFORMANCE MARK:    3.1/3.1
+
+!!marktab       **  MARKER'S  ASSESSMENT  **
+
+                              Style Mark  (3)   3
+ ^
+ + =============================================== +
+ + Good work! When using realloc(), it is a good   +
+ + idea to double the amount of memory allocated,  +
+ + to avoid calling realloc too many times (which  +
+ + slows down your program).                       +
+ + =============================================== +
+
+!!finalmark     **  FINAL  ASSIGNMENT  MARK:    9.7/10
+
+5240221 Gupta, Jatin                            8543   COMPAS COMPSS
+
+
+Marked by z5164800 on Sun Jul 28 21:28:58 2019
+
