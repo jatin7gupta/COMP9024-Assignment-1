@@ -1,7 +1,6 @@
 ```
-Contents
-1. Assignment 1: Solvability of the NxN sliding tile
-puzzle
+Contents 
+Assignment 1: Solvability of the NxN sliding tile puzzle
 1. 1. Input format
 2. In the case of incorrect input
 3. In the case of correct input
