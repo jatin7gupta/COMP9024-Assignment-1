@@ -200,5 +200,192 @@ unsolvable). It is also easy to add new test input to the _Tests_ directory.
 You can make this script much fancier of course. You could for example add a 4th case to test
 bigger boards if that is where you want to focus on at a particular stage in the development.
 
+```
+Contents
+1. Tutorial for the Sliding-Tile
+Puzzle
+1. First set of exercises
+2. Solvability
+1. Second set of exercises
+```
+# Tutorial for the Sliding-Tile Puzzle
+
+In the N^2 sliding-tile puzzle, there are N^2 squares, and N^2 -1 tiles, numbered from 1 to N^2 -1.
+These tiles are placed on the board leaving one square blank. Given some start configuration
+of numbered tiles on the squares, the aim is to move tiles, one at a time, until some given goal
+configuration is reached. A move involves placing one of the tiles that neighbours the blank
+square into that space, excluding the tile that was previously on the square. (You can only
+move in the horizontal and vertical directions of course.) The aim is to reach the goal
+configuration with a minimum number of tile moves.
+
+The puzzle was first created in the late 19th century. It became a craze in the USA in 1880,
+and 'everybody' played it. Here's a cartoon about the difficult in choosing the republican
+candidate at the 1880 U.S. presidential elections.
+
+## First set of exercises
+
+
+1. Consider a 2^2 puzzle.
+a. How many different possible configurations of tiles are there?
+b. Generate all possible configurations given:
+i. start configuration
+1 2
+3
+ii. start configuration
+2 1
+3
+iii. A configuration is called reachable if it can be reached from a given start
+configuration. How many reachable configurations were there from each of
+the two start configurations, and how does that related to the total number
+in the puzzle?
+c. Given the start configuration:
+1 2
+3
+and goal configuration
+1 3
+2
+can you solve the puzzle?
+2. How many different possible configurations of tiles are there in the:
+a. 32 puzzle?
+b. 42 puzzle?
+c. n^2 puzzle?
+3. Given the 3^2 puzzle goal configuration:
+1 2 3
+8 4
+7 6 5
+and start configuration:
+8 3 5
+4 1 6
+2 7
+draw the solution tree that represents every configuration by a vertex and every move
+by an edge. Do not repeat configurations, and go no deeper than level 3 (where level 0
+is the root vertex).
+
+# Solvability
+
+It is not always possible to reach a given goal state from some given start state. This was
+realised very soon after the game was 'invented' (about 1879).
+
+There is an algorithm to determine whether two states are reachable. This algorithm involves
+differentiating between even-sized boards, 2^2 , 4^2 , 6^2 etc, and odd-sized boards, 3^2 , 5^2 etc.
+
+We also need to define the **disorder** of a tile, and of a board:
+
+
+the disorder of a tile is the number of lower-numbered tiles that appear after it in left-
+right top-down order
+the disorder of a board is:
+odd-sized board : the sum of the tile disorders
+even-sized board : the sum of the tile disorders plus the row number of the blank
+(row numbers start with 1)
+
+Finally we can define the **parity** of a board:
+
+
+the parity is even if the board disorder is even
+the parity is odd if the board disorder is odd
+A goal board is reachable from a start board if and only if both boards
+have the same parity.
+
+
+For example, if you have a goal board:
+
+```
+1 2
+3
+```
+we note that:
+
+```
+tile '1': disorder = 0 (in its correct position)
+tile '2': disorder = 0 (correct position)
+tile '3': disorder = 0 (correct position)
+blank is in row 2
+```
+so the disorder of this board is 0+0+0+2, hence the board has even parity.
+
+If you have the start board:
+
+```
+3 2
+1
+```
+the disorders are:
+
+```
+tile '3': disorder = 2 (tiles '2' and '1' appear after it)
+tile '2': disorder = 1 (tile '1' appears after it)
+blank is in row 2
+tile '1': disorder = 0
+```
+so the start board has disorder 2+1+2+0 = 5. The parity of this board is hence odd, which is
+different to the parity of the goal board, hence you cannot reach the goal board from this start
+board. Hence the game cannot be solved.
+
+A different start board:
+
+```
+1
+3 2
+```
+yields 1+0+1+0 = 2, where the 1's come from the blank and tile 3. The disorder is hence even,
+which is the same parity as the goal board, hence you can reach that goal board from this
+board, and the game is solvable.
+
+Another example, this time a 3x3 goal board:
+
+```
+1 2 3
+4 5 6
+7 8
+```
+This board is odd-sized, and we can see all tiles are in the correct position, hence the parity is
+even.
+
+Computing the disorder of the following start board:
+
+```
+8 7 6
+5 4 3
+2 1
+```
+
+yields disorder = 7+6+5+4+3+2+1+0 = 28. The parity of the start and goal boards are both
+even, hence the game is solvable.
+
+Sometimes board configurations are written sequentially: e.g. the previous start board can be
+written _8 7 6 5 4 3 2 1 b_ , where _b_ is the blank square and the rows are written sequentially
+from top to bottom.
+
+## Second set of exercises
+
+```
+1. a. Show that the disorders of all the boards reachable from the start board 1 2 3 b
+are even.
+b. Show that the disorders of all the boards reachable from the start board 2 1 3 b
+are odd.
+2. a. What is the parity of the following goal board?
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15
+b. Is that goal board reachable from the following start board?
+1 2 3 4
+5 6 7 8
+9 10 11
+12 13 14 15
+If the goal is reachable, how many moves are required?
+c. Is that goal board reachable from the following start board?
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15
+If the goal is reachable, how many moves are required?
+3. Is the puzzle with start board 1 6 7 2 5 8 3 4 b and goal board 1 2 3 8 b 4 7 6 5
+solvable?
+```
+
+
+
 
 
