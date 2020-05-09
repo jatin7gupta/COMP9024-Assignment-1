@@ -9,9 +9,9 @@ Assignment 1: Solvability of the NxN sliding tile puzzle
 6. Submission
 7. Testing
 ```
-# Assignment 1: Solvability of the NxN sliding
+# Solvability of the NxN sliding
 
-# tile puzzle
+# Tile puzzle
 
 The sliding tile puzzle is a game that requires you to move tiles on a board. The board is
 NxN, and there are N-1 tiles numbered from 1..N-1 that occupy the board. There is hence 1
